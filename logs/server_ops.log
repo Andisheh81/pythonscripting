@@ -1,0 +1,5 @@
+INFO: System starting up.
+ERROR: Database connection timeout.
+WARNING: High CPU load.
+ERROR: Failed to write packet to socket.
+INFO: Routine check completed.
