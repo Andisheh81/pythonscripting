@@ -43,3 +43,18 @@ if match:
     print("\nAll groups tuple:", match.groups())
 else:
     print("No match found.")
+
+   
+
+log_line2 = "User 'root_admin' logged in from IP 192.168.1.50 with status SUCCESS."
+
+# Define two groups:
+# Group 1: Everything up to the IP
+# Group 2: The IP address itself
+pattern = r"(User '\w+' logged in from IP )(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+
+# Use \1 to keep Group 1 exactly as it is, and replace Group 2 with [REDACTED]
+redacted_line = re.sub(pattern, r"\1[REDACTED]", log_line2)
+
+print(redacted_line)
+# Output: User 'root_admin' logged in from IP [REDACTED] with status SUCCESS.
