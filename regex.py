@@ -1,13 +1,13 @@
 import re
-"""
-log_line = "2026-11-09 18:45:12 [WARN] Admin user 'root_admin' failed login from IP 10.0.4.55 - Error Code: ERR-9021."
+
+log_line4 = "2026-11-09 18:45:12 [WARN] Admin user 'root_admin' failed login from IP 10.0.4.55 - Error Code: ERR-9021."
 
 # 1. Using re.search() so we can use .group()
 reg = r"ERR-\d{4}"
-match = re.search(reg, log_line)
+match1 = re.search(reg, log_line4)
 
-if match:
-    print(f"Here is the result: {match.group()}")
+if match1:
+    print(f"Here is the result: {match1.group()}")
 else:
     print("No result found")
 
@@ -16,9 +16,9 @@ ip_pattern = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 subst = "[REDACTED]"
 
 # re.sub returns a plain string, so we print it directly
-redacted_log = re.sub(ip_pattern, subst, log_line)
+redacted_log = re.sub(ip_pattern, subst, log_line4)
 print(f"Redacted log line:{redacted_log}")
-"""
+
 
 
 log_line = "2026-11-09 18:45:12 [WARN] Admin user 'root_admin' failed login from IP 10.0.4.55 - Error Code: ERR-9021."
@@ -28,9 +28,9 @@ log_line = "2026-11-09 18:45:12 [WARN] Admin user 'root_admin' failed login from
 # Group 2: Log Level (WARN, ERROR, etc.)
 # Group 3: Username
 # Group 4: IP Address
-pattern = r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[([A-Z]+)\] Admin user '(\w+)' failed login from IP (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+pattern1 = r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[([A-Z]+)\] Admin user '(\w+)' failed login from IP (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
 
-match = re.search(pattern, log_line)
+match = re.search(pattern1, log_line)
 
 if match:
     print("--- Successfully Parsed Log ---")
@@ -51,10 +51,37 @@ log_line2 = "User 'root_admin' logged in from IP 192.168.1.50 with status SUCCES
 # Define two groups:
 # Group 1: Everything up to the IP
 # Group 2: The IP address itself
-pattern = r"(User '\w+' logged in from IP )(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+pattern2 = r"(User '\w+' logged in from IP )(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
 
 # Use \1 to keep Group 1 exactly as it is, and replace Group 2 with [REDACTED]
-redacted_line = re.sub(pattern, r"\1[REDACTED]", log_line2)
+redacted_line = re.sub(pattern2, r"\1[REDACTED]", log_line2)
 
 print(redacted_line)
 # Output: User 'root_admin' logged in from IP [REDACTED] with status SUCCESS.
+
+#AUTOMATIC SUBSTITUTION
+
+
+log_line3 = "User 'root_admin' and user 'superuser123' attempted login."
+
+def mask_username(m):
+    # match.group(1) contains the captured username string
+    username = m.group(1)
+    
+    # Apply dynamic string manipulation logic
+    if len(username) <= 2:
+        masked = "*" * len(username)
+    else:
+        # Keep the first and last letter, mask everything in between
+        masked = username[0] + ("*" * (len(username) - 2)) + username[-1]
+        
+    return f"User '{masked}'"
+
+# Pattern captures the username inside the quotes
+pattern3 = r"User '(\w+)'"
+
+# Pass our custom function directly into re.sub
+sanitized_log = re.sub(pattern3, mask_username, log_line3)
+
+print(sanitized_log)
+# Output: User 'r********n' and user 's***********3' attempted login.
